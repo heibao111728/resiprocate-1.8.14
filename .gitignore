@@ -291,3 +291,14 @@ __pycache__/
 *.so
 *.a
 *.out
+*.o
+.deps/
+.libs/
+Makefile
+libtool
+config.status
+config.h
+stamp-h1
+*.lo
+*.la
+
