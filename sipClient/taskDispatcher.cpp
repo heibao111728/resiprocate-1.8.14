@@ -35,7 +35,8 @@ int CTaskDispatcher::startRealPlay(char* call_id, char* target_dev_id, char* tar
         )
     {
         sprintf(sip_starget, "sip:%s@%s", target_dev_id, target_realm);
-        BasicClientUserAgent::getInstance()->doInvite(call_id, sip_starget, media_recv_ip, media_recv_port);
+        //BasicClientUserAgent::getInstance()->doInvite(
+        //    call_id, sip_starget, media_recv_ip, media_recv_port);
     }
     return 0;
 }
