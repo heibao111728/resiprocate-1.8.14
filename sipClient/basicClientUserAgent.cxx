@@ -118,7 +118,7 @@ namespace resip
     };
 } // namespace resip
 
-BasicClientUserAgent* BasicClientUserAgent::mInstance = NULL;
+//BasicClientUserAgent* BasicClientUserAgent::mInstance = NULL;
 
 BasicClientUserAgent::BasicClientUserAgent() :
     /*BasicClientCmdLineParser(argc, argv),*/
@@ -390,9 +390,9 @@ void BasicClientUserAgent::startup()
 
     if (mRegisterDuration)
     {
-        InfoLog(<< "register for " << mAor);
+        //InfoLog(<< "register for " << mAor);
         //mDum->send(mDum->makeRegistration(NameAddr(mAor)));
-        doRegister(mRegisterDuration);
+        //doRegister(mRegisterDuration);
     }
 
 
@@ -1058,9 +1058,58 @@ void BasicClientUserAgent::onMessageArrived(ServerPagerMessageHandle h, const Si
     }
 }
 
+void BasicClientUserAgent::init(char* SipServerId, char* SipServerIp, unsigned short SipServerTCPPort,
+    unsigned short SipServerUDPPort)
+{}
+
+void BasicClientUserAgent::onRegisterSuccess()
+{
+}
+
+void BasicClientUserAgent::onRegisterFailure_401()
+{}
+
+void BasicClientUserAgent::onRegisterFailure()
+{}
+
+int BasicClientUserAgent::doInit(char* SipServerId, char* SipServerIp, int SipServerPort, char* AuthPwd,
+    char* SipClientId, int SipClientPort)
+{
+    if (mIsInited)
+    {
+        if (SipServerId && SipServerIp && SipClientId && AuthPwd)
+        {
+            mSipServerId = SipServerId;
+            mSipServerIp = SipServerIp;
+            mSipServerPort = SipServerPort;
+            mPassword = AuthPwd;
+            mSipClientId = SipClientId;
+            mSipClientPort = SipClientPort;
+            mRealm = mSipServerId.substr(0, 10);
+        }
+    }
+    else
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
 int BasicClientUserAgent::doRegister(int expire)
 {
-    mDum->send(mDum->makeRegistration(NameAddr(mAor), expire));
+    Uri uri;
+    uri.host() = mRealm;
+    uri.port() = mSipClientPort;
+    uri.user() = mSipClientId; 
+    uri.scheme() = "sip";
+
+    if (mSecurityFlag)
+    {
+        uri.scheme().replace("sip", "sips");
+    }
+
+    mDum->send(mDum->makeRegistration(NameAddr(uri), expire));
     return 0;
 }
 
@@ -1073,28 +1122,30 @@ int BasicClientUserAgent::doInvite(char* callid, char* deviceId, char* realm, ch
     //         newCall->initiateCall(mCallTarget, mProfile);
     //     }
 
-    if (strlen(callid) <= 0)
+    Uri callTarget;
+
+    if (deviceId)
     {
-        // no callid.
+        callTarget.scheme() = "sip";
+        callTarget.user() = deviceId;
+        callTarget.host() = mRealm;
+
+        if (mSecurityFlag)
+        {
+            callTarget.scheme().replace("sip", "sips");
+        }
+    }
+    else
+    {
         return -1;
     }
 
-    Data mediaRecv_Ip(mediaRecvIp);
-    Data mediaRecv_Port(mediaRecvPort);
-
-    Data callTarget_buf = Data("sip:") + Data(deviceId) + Data("@") + Data(realm);
-    if (securityFlag)
-    {
-        callTarget_buf.replace("sip", "sips");
-    }
-
-    Uri callTarget(callTarget_buf);
     if (callTarget.isWellFormed())
     {
         BasicClientCall *newCall = new BasicClientCall(*this);
-        newCall->initiateCall(mCallTarget, mProfile, mediaRecv_Ip, mediaRecv_Port);
+        newCall->initiateCall(callTarget, mProfile, mediaRecvIp, 0);
 
-        mCallMap.insert(make_pair(callid, newCall));
+        mCallMap.insert(make_pair("12345678", newCall));
 
         //Sleep(10 * 1000);
 
@@ -1115,28 +1166,23 @@ int BasicClientUserAgent::doBye(char* callid)
     return 0;
 }
 
-int BasicClientUserAgent::doGetDirectory()
+int BasicClientUserAgent::doMessage(Data message)
 {
-    ClientPagerMessageHandle cpmh = mDum->makePagerMessage(NameAddr(mAor), mProfile);
+    Uri uri;
+    uri.host() = mRealm;
+    uri.port() = mSipServerPort;
+    uri.user() = mSipClientId;
+    uri.scheme() = "sip";
+    if (mSecurity)
+    {
+        uri.scheme().replace("sip", "sips");
+    }
 
-    string getCatalogReq =
-        "<?xml version=\"1.0\"?>\r\n"
-        "<Query>\r\n"
-        "<CmdType>Catalog</CmdType>\r\n"
-        "<SN>248</SN>\r\n"
-        "<DeviceID>34020000002000000001</DeviceID>\r\n"
-        "</Query>\r\n"
-        ;
+    ClientPagerMessageHandle cpmh = mDum->makePagerMessage(NameAddr(uri), mProfile);
 
     Mime type("Application", "MANSCDP+xml");
-    auto_ptr<Contents> content(new PlainContents(Data(getCatalogReq), type));
+    auto_ptr<Contents> content(new PlainContents(message, type));
     cpmh.get()->page(content);
-
-    return 0;
-}
-
-int BasicClientUserAgent::doPlayBack()
-{
     return 0;
 }
 
@@ -1152,11 +1198,6 @@ int BasicClientUserAgent::doSubscribe()
 }
 
 int BasicClientUserAgent::doUnSubscribe()
-{
-    return 0;
-}
-
-int BasicClientUserAgent::doPtzControl()
 {
     return 0;
 }

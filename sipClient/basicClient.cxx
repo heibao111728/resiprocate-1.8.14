@@ -10,7 +10,8 @@ bool TRUE=true;
 bool FALSE=false;
 #endif
 
-#include "basicClientUserAgent.hxx"
+//#include "basicClientUserAgent.hxx"
+#include "gb28181UserAgent.h"
 #include <resip/stack/SipStack.hxx>
 #include <resip/stack/Uri.hxx>
 #include <rutil/Logger.hxx>
@@ -63,24 +64,48 @@ main(int argc, char* argv[])
 
    try
    {
-       BasicClientUserAgent* pUa = BasicClientUserAgent::getInstance();
-       pUa->startup();
-      
-      InfoLog(<< argv[0] << " starting");
+       //BasicClientUserAgent* pUa = BasicClientUserAgent::getInstance();
+      // BasicClientUserAgent* pUa = new BasicClientUserAgent();
+      // pUa->startup();
+      //
+      //InfoLog(<< argv[0] << " starting");
 
-      Sleep(5 * 1000);
+      //Sleep(5 * 1000);
 
-      pUa->doInvite("test1", "34020000001320000202", "3402000000", "192.168.2.102", 9000);
-      //Sleep(2 * 1000);
-      //BasicClientUserAgent::getInstance()->doInvite("test2", "34020000001320000201", "3402000000", "192.168.2.102", 20000);
+      //pUa->doInvite("test1", "34020000001320000202", "3402000000", "192.168.2.102", 9000);
+      ////Sleep(2 * 1000);
+      ////BasicClientUserAgent::getInstance()->doInvite("test2", "34020000001320000201", "3402000000", "192.168.2.102", 20000);
 
-      //Sleep(6 * 1000);
+      ////Sleep(6 * 1000);
 
-      //BasicClientUserAgent::getInstance()->doBye("test2");
+      ////BasicClientUserAgent::getInstance()->doBye("test2");
+      ////pUa->doBye("test1");
+
+      //Sleep(120 * 1000);
       //pUa->doBye("test1");
+       char* SipServerId = "34020000002000000001";
+       char* SipServerIp = "192.168.2.128";
+       int SipServerPort = 5060;
+       char* AuthPwd = "12345678a";
 
-      Sleep(120 * 1000);
-      pUa->doBye("test1");
+       char* SipClientId = "34020000004000000001";
+       int SipClientPort = 5060;
+
+       GB28181UserAgent gb28181ua;
+
+       gb28181ua.doInit(SipServerId, SipServerIp, SipServerPort, AuthPwd, SipClientId, SipClientPort);
+
+       gb28181ua.startup();
+
+       gb28181ua.doRegister(3600);
+
+       InfoLog(<< argv[0] << " starting");
+
+       gb28181ua.doInvite("test1", "34020000001320000202", "3402000000", "192.168.2.102", 9000);
+
+
+
+
 
       //while(ua.process(1000))  // Look for exit key every 1 second
       //{

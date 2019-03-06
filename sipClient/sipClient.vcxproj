@@ -118,12 +118,14 @@
     <ClCompile Include="basicClient.cxx" />
     <ClCompile Include="basicClientCall.cxx" />
     <ClCompile Include="basicClientUserAgent.cxx" />
+    <ClCompile Include="gb28181UserAgent.cpp" />
     <ClCompile Include="taskDispatcher.cpp" />
     <ClCompile Include="userAgentCoreThread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basicClientCall.hxx" />
     <ClInclude Include="basicClientUserAgent.hxx" />
+    <ClInclude Include="gb28181UserAgent.h" />
     <ClInclude Include="taskDispatcher.h" />
     <ClInclude Include="userAgentCoreThread.h" />
   </ItemGroup>

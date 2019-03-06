@@ -43,7 +43,7 @@ int CTaskDispatcher::startRealPlay(char* call_id, char* target_dev_id, char* tar
 int CTaskDispatcher::stopRealPlay(char* call_id, char* target_dev_id, char* target_realm, char* media_recv_ip, int media_recv_port)
 {
     char sip_starget[100] = { 0 };
-    BasicClientUserAgent* pUserAgent = BasicClientUserAgent::getInstance();
+    //BasicClientUserAgent* pUserAgent = BasicClientUserAgent::getInstance();
     if ( strlen(call_id) > 0
         || strlen(target_dev_id) > 0
         || strlen(target_realm) > 0
@@ -51,7 +51,7 @@ int CTaskDispatcher::stopRealPlay(char* call_id, char* target_dev_id, char* targ
         )
     {
         sprintf(sip_starget, "sip:%s@%s", target_dev_id, target_realm);
-        BasicClientUserAgent::getInstance()->doBye(call_id);
+        //BasicClientUserAgent::getInstance()->doBye(call_id);
     }
     return 0;
 }

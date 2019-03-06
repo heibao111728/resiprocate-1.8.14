@@ -40,29 +40,9 @@ namespace resip
         public ClientPagerMessageHandler,  /*used for message request*/
         public ServerPagerMessageHandler   /*used for message request*/
     {
-    private:
+    public:
         BasicClientUserAgent();
-        
 
-    public:
-        static BasicClientUserAgent* getInstance()
-        {
-            if (NULL != mInstance)
-            {
-                return mInstance;
-            }
-            else
-            {
-                mInstance = new BasicClientUserAgent();
-                return mInstance;
-            }
-        }
-
-        //静态成员变量需要先初始化
-        static BasicClientUserAgent* mInstance;
-        
-
-    public:
         virtual ~BasicClientUserAgent();
         virtual void startup();
         virtual void shutdown();
@@ -156,7 +136,18 @@ namespace resip
 
         //ServerPagerMessageHandle
         virtual void onMessageArrived(ServerPagerMessageHandle, const SipMessage& message);
+
+        //added by yangdong, used for gb28181 ua.
+        virtual void init(char* SipServerId, char* SipServerIp, unsigned short SipServerTCPPort,
+            unsigned short SipServerUDPPort);
+
+        virtual void onRegisterSuccess();
+        virtual void onRegisterFailure_401();
+        virtual void onRegisterFailure();
     public:
+        int doInit(char* SipServerId, char* SipServerIp, int SipServerPort, char* AuthPwd,
+            char* SipClientId, int SipClientPort);
+
         /**
         *   function:
         *       register to sipSvr
@@ -196,21 +187,7 @@ namespace resip
         */
         int doBye(char* callid);
 
-        /**
-        *   function:
-        *       get Directiory info from sipsvr
-        *   功能：
-        *       获取目录信息
-        */
-        int doGetDirectory();
-
-        /**
-        *   function:
-        *       review
-        *   功能：
-        *       历史视频预览
-        */
-        int doPlayBack();
+        int doMessage(Data message);
 
         /**
         *   function:
@@ -227,14 +204,6 @@ namespace resip
         *       取消订阅
         */
         int doUnSubscribe();
-
-        /**
-        *   function:
-        *       ptz control
-        *   功能：
-        *       设备PTZ控制
-        */
-        int doPtzControl();
 
     protected:
         void addTransport(TransportType type, int port);
@@ -271,7 +240,7 @@ namespace resip
         //modified by yangdong
         CUserAgentCoreThread *mUserAgentThread;
 
-    private:
+    protected:
         Data mLogType;
         Data mLogLevel;
         char *m_LogFileName;
@@ -297,6 +266,19 @@ namespace resip
 
         Uri mSubscribeTarget;
         Uri mCallTarget;
+
+        //added by yangdong
+        bool mSecurityFlag;
+        bool mIsInited;
+
+        Data mSipServerId;
+        Data mSipServerIp;
+        int mSipServerPort;
+
+        Data mRealm;
+
+        Data mSipClientId;
+        int mSipClientPort;
     };
 
 } // namespace resip

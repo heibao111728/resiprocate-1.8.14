@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="basicClientUserAgent.cxx">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="taskDispatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -28,6 +25,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="basicClientCall.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="basicClientUserAgent.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gb28181UserAgent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="basicClientUserAgent.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gb28181UserAgent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
