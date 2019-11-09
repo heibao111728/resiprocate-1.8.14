@@ -38,11 +38,11 @@ class ForkControlMessage : public ProcessorMessage
       
       virtual EncodeStream& encode(EncodeStream& ostr) const 
       { 
-         ostr << "ForkControlMessage(tid="<<mTid<<"): " << 
-         ostr << " newTrans=" << resip::Inserter(mTransactionsToProcess) <<
-         ostr << " cancelTrans=" << resip::Inserter(mTransactionsToCancel) <<
-         ostr << " cancelAll=" << mShouldCancelAll;
-         return ostr; 
+          ostr << "ForkControlMessage(tid=" << mTid << "): ";
+          ostr << " newTrans=" << resip::Inserter(mTransactionsToProcess);
+          ostr << " cancelTrans=" << resip::Inserter(mTransactionsToCancel);
+          ostr << " cancelAll=" << mShouldCancelAll;
+          return ostr;
       }
       virtual EncodeStream& encodeBrief(EncodeStream& ostr) const { return encode(ostr);}
 
